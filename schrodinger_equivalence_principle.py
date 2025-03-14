@@ -64,6 +64,13 @@ noninertial_prob_dist = np.abs(noninertial_wave_function(z[:, np.newaxis], t, z_
 # Plot results
 fig, (x1, x2) = plt.subplots(1, 2, figsize=(12, 6))
 
+# Event closure cleanup
+def event_close(event):
+    plt.close('all')
+    print("Closing the animation on user request")
+
+fig.canvas.mpl_connect('close_event', event_close)
+
 # Frame update
 def update(frame):
     x1.clear()
