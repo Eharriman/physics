@@ -143,6 +143,40 @@ def animate_particle_vs_wave():
     ani = FuncAnimation(fig, update, frames=t_nums, interval=50, blit=False)
     plt.show()
 
+
+def simulate_measurements(trial_list):
+    # Function simulates position measurements. n trials increases and the histogram smooths out to recover
+    # the pdf. This is using the inertial pdf at t = 0
+    if isinstance(trial_list, int):  # Allow single integer input
+        trial_list = [trial_list]
+
+    num_subplots = len(trial_list)
+    fig, axes = plt.subplots(1, num_subplots, figsize=(5 * num_subplots, 4))  # Remove sharey=True
+
+    if num_subplots == 1:
+        axes = [axes]  # Ensure it's always iterable
+
+    pdf = inertial_prob_dist[:, 0]
+    pdf /= np.trapezoid(pdf, z)  # Normalize
+
+    for i, n in enumerate(trial_list):
+        # Select random measurements bounded by wave packet
+        samples = np.random.choice(z, size=n, p=pdf / np.sum(pdf))
+
+        # Histogram plots for trials
+        counts, bins, _ = axes[i].hist(samples, bins=40, alpha=0.6, color='b', label=f"n={n}")
+
+        # Scale y-axis for each histogram by trial size
+        axes[i].set_ylim(0, max(counts) * 1.1)
+        axes[i].set_xlabel("Position (z)")
+        axes[i].axvline(0, color='k', linestyle='--', alpha=0.7)
+        axes[i].legend()
+
+    axes[0].set_ylabel("Number of Measurements")
+    plt.suptitle("Position Measurements over Identical Trials (n = 10, 100, 1000, 100000")
+    plt.show()
+
+
 # Animation method
 
 def run_animation(animation_type="all"):
@@ -164,3 +198,8 @@ def run_animation(animation_type="all"):
 # run_animation("wavefunction_3D")
 #run_animation("particle_vs_wave")
 # run_animation("all")
+
+# Run the simulation with increasing number of measurements
+#n_trials_list = [10, 100, 1000, 100000]
+# Example usage:
+simulate_measurements([10, 100, 1000, 100000])
