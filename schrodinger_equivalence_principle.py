@@ -179,13 +179,15 @@ def simulate_measurements(trial_list):
 
 # Animation method
 
-def run_animation(animation_type="all"):
+def run_animation(animation_type="all", *args):
     if animation_type == "inertial_vs_noninertial":
         animate_inertial_vs_noninertial()
     elif animation_type == "wavefunction_3D":
         animate_wavefunction_3D()
     elif animation_type == "particle_vs_wave":
         animate_particle_vs_wave()
+    elif animation_type == "simulate_measurements":
+            simulate_measurements(args)
     elif animation_type == "all":
         animate_inertial_vs_noninertial()
         animate_wavefunction_3D()
@@ -193,13 +195,16 @@ def run_animation(animation_type="all"):
     else:
         print(f"Unknown animation type: {animation_type}")
 
+#n_trials_list = [10, 100, 1000]
 # Uncomment the animation you want to watch here
 # run_animation("inertial_vs_noninertial")
 # run_animation("wavefunction_3D")
 #run_animation("particle_vs_wave")
+# Need to fix this so I can pass the list. How do you override again in Python?
+#run_animation("simulate_measurements",n_trials_list)
 # run_animation("all")
 
 # Run the simulation with increasing number of measurements
 #n_trials_list = [10, 100, 1000, 100000]
 # Example usage:
-simulate_measurements([10, 100, 1000, 100000])
+#simulate_measurements([10, 100, 1000, 100000])
