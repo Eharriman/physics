@@ -42,20 +42,24 @@ save_indices = [np.argmin(np.abs(t - ts)) for ts in save_times]
 # The LAWS OF PHYSICS!
 
 def gaussian_wave_packet(z, t, z_0, sigma_0):
-    """Computes a Gaussian wave packet."""
+    # Calculates a Gaussian wave packet using the simplified physical constants.
+    # If you want to use the actual physical constants use h_d -> hbar, m_d -> m_e, g_d -> g
     w = np.sqrt(1 / (1 + ((2 * h_d * t) / m_d) ** 2))
     return np.sqrt(2 / np.pi) * w * np.exp(-2 * (w ** 2) * (z ** 2))
 
 def inertial_wave_function(z, t, z_0, sigma_0):
-    """Computes the wavefunction in the inertial frame."""
+    # Calculates the wave function for the inertial coordinate system.
     xi = z + 0.5 * g * t ** 2
     psi0 = gaussian_wave_packet(xi, t, z_0, sigma_0)
     phase_factor = np.exp(-1j * m_d * g_d * t * (z + (1 / 6) * g * t ** 2) / hbar)
     return psi0 * phase_factor
 
 def noninertial_wave_function(z_prime, t, z_0, sigma_0):
-    """Computes the wavefunction in the non-inertial frame."""
-    return gaussian_wave_packet(z_prime, t, z_0, sigma_0)
+    # Computes the wave function for the freely falling coordinate system
+    psi0 = gaussian_wave_packet(z_prime, t, z_0, sigma_0)
+    phase_factor = np.exp(-1j * m_d * g_d * t * (z_prime - (1 / 3) * g * t ** 2) / hbar)
+    #return gaussian_wave_packet(z_prime, t, z_0, sigma_0)
+    return psi0 * phase_factor
 
 # Use np.abs() for probability distributions.
 inertial_prob_dist = np.abs(inertial_wave_function(z[:, np.newaxis], t, z_0, sigma_0)) ** 2
@@ -177,9 +181,9 @@ def simulate_measurements(trial_list):
     plt.show()
 
 
-# Animation method
+# Animation method. *n_trials_list is an optional parameter
 
-def run_animation(animation_type="all", *args):
+def run_animation(animation_type="all", *n_trials_list):
     if animation_type == "inertial_vs_noninertial":
         animate_inertial_vs_noninertial()
     elif animation_type == "wavefunction_3D":
@@ -187,7 +191,7 @@ def run_animation(animation_type="all", *args):
     elif animation_type == "particle_vs_wave":
         animate_particle_vs_wave()
     elif animation_type == "simulate_measurements":
-            simulate_measurements(args)
+            simulate_measurements(*n_trials_list)
     elif animation_type == "all":
         animate_inertial_vs_noninertial()
         animate_wavefunction_3D()
@@ -195,13 +199,13 @@ def run_animation(animation_type="all", *args):
     else:
         print(f"Unknown animation type: {animation_type}")
 
-#n_trials_list = [10, 100, 1000]
+n_trials_list = [10, 100, 1000]
+
 # Uncomment the animation you want to watch here
 # run_animation("inertial_vs_noninertial")
 # run_animation("wavefunction_3D")
 #run_animation("particle_vs_wave")
-# Need to fix this so I can pass the list. How do you override again in Python?
-#run_animation("simulate_measurements",n_trials_list)
+# run_animation("simulate_measurements",n_trials_list)
 # run_animation("all")
 
 # Run the simulation with increasing number of measurements
